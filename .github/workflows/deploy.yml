@@ -31,20 +31,34 @@ jobs:
         run: |
           mkdir -p src/locales
 
+          echo "Fetching locales for project: $INTERCOPY_PROJECT_ID"
+
           # Export the neutral bundle (all languages in one call)
-          curl -sf "$INTERCOPY_API_URL/api/exports/neutral?projectId=$INTERCOPY_PROJECT_ID&version=live" \
+          if curl -sf "$INTERCOPY_API_URL/api/exports/neutral?projectId=$INTERCOPY_PROJECT_ID&version=live" \
             -H "Accept: application/json" \
-            -o /tmp/intercopy-export.json
+            -o /tmp/intercopy-export.json; then
 
-          # Split into per-locale files using jq
-          # source → en.json
-          jq '.source' /tmp/intercopy-export.json > src/locales/en.json
+            # Validate it's a real export (not an error object)
+            if jq -e '.source' /tmp/intercopy-export.json > /dev/null 2>&1; then
+              echo "✅ Export fetched — splitting into locale files"
 
-          # Each target language
-          for lang in $(jq -r 'keys[] | select(. != "source")' /tmp/intercopy-export.json); do
-            jq --arg lang "$lang" '.[$lang]' /tmp/intercopy-export.json > "src/locales/${lang}.json"
-            echo "Written src/locales/${lang}.json"
-          done
+              # source → en.json
+              jq '.source' /tmp/intercopy-export.json > src/locales/en.json
+
+              # Each target language
+              for lang in $(jq -r 'keys[] | select(. != "source")' /tmp/intercopy-export.json); do
+                jq --arg lang "$lang" '.[$lang]' /tmp/intercopy-export.json > "src/locales/${lang}.json"
+                echo "  Written src/locales/${lang}.json"
+              done
+            else
+              echo "⚠️  Export response did not contain .source — using bundled locales"
+            fi
+          else
+            echo "⚠️  InterCopy API fetch failed (project not yet seeded?) — using bundled locales"
+          fi
+
+          echo "Locale files present:"
+          ls -la src/locales/
 
       - name: Check if locales changed
         id: diff
