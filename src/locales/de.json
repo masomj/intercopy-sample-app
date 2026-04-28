@@ -1,0 +1,50 @@
+{
+  "nav": {
+    "title": "TaskFlow",
+    "tagline": "Erledigen Sie Dinge"
+  },
+  "hero": {
+    "heading": "Verwalten Sie Ihre Aufgaben,",
+    "headingAccent": "auf Ihre Art.",
+    "description": "Ein einfacher, schöner Aufgabenmanager, der InterCopy demonstriert — die Lokalisierungsplattform für moderne Teams.",
+    "cta": "Jetzt ausprobieren",
+    "badge": "Unterstützt von InterCopy"
+  },
+  "features": {
+    "heading": "Warum TaskFlow?",
+    "cards": {
+      "simple": {
+        "title": "Einfach gestaltet",
+        "description": "Kein Lärm, kein Durcheinander. Nur Ihre Aufgaben und die nötigen Werkzeuge."
+      },
+      "fast": {
+        "title": "Blitzschnell",
+        "description": "Fügen Sie Aufgaben hinzu, erledigen und löschen Sie sie sofort. Für Geschwindigkeit gemacht."
+      },
+      "global": {
+        "title": "Für alle gebaut",
+        "description": "Verfügbar in mehreren Sprachen. Weil großartige Tools global sein sollten."
+      }
+    }
+  },
+  "todo": {
+    "heading": "Ihre Aufgaben",
+    "placeholder": "Neue Aufgabe hinzufügen…",
+    "addButton": "Hinzufügen",
+    "emptyState": "Noch keine Aufgaben. Fügen Sie eine oben hinzu!",
+    "completeLabel": "Als erledigt markieren",
+    "deleteLabel": "Aufgabe löschen",
+    "completedBadge": "Erledigt",
+    "layout": {
+      "horizontal": "Reihe",
+      "vertical": "Stapel"
+    },
+    "counter": "{count} Aufgabe übrig | {count} Aufgaben übrig"
+  },
+  "footer": {
+    "madeWith": "Erstellt mit",
+    "using": "mit",
+    "link": "InterCopy",
+    "rights": "© 2026 TaskFlow. Alle Rechte vorbehalten."
+  }
+}

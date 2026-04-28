@@ -1,0 +1,50 @@
+{
+  "nav": {
+    "title": "TaskFlow",
+    "tagline": "Get things done"
+  },
+  "hero": {
+    "heading": "Manage your tasks,",
+    "headingAccent": "your way.",
+    "description": "A simple, beautiful task manager built to demonstrate InterCopy — the localization platform for modern teams.",
+    "cta": "Try it now",
+    "badge": "Powered by InterCopy"
+  },
+  "features": {
+    "heading": "Why TaskFlow?",
+    "cards": {
+      "simple": {
+        "title": "Simple by design",
+        "description": "No noise, no clutter. Just your tasks and the tools you need."
+      },
+      "fast": {
+        "title": "Lightning fast",
+        "description": "Add, complete, and delete tasks in an instant. Built for speed."
+      },
+      "global": {
+        "title": "Built for everyone",
+        "description": "Available in multiple languages. Because great tools should be global."
+      }
+    }
+  },
+  "todo": {
+    "heading": "Your Tasks",
+    "placeholder": "Add a new task…",
+    "addButton": "Add",
+    "emptyState": "No tasks yet. Add one above!",
+    "completeLabel": "Mark complete",
+    "deleteLabel": "Delete task",
+    "completedBadge": "Done",
+    "layout": {
+      "horizontal": "Row",
+      "vertical": "Stack"
+    },
+    "counter": "{count} task remaining | {count} tasks remaining"
+  },
+  "footer": {
+    "madeWith": "Made with",
+    "using": "using",
+    "link": "InterCopy",
+    "rights": "© 2026 TaskFlow. All rights reserved."
+  }
+}

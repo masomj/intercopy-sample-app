@@ -1,0 +1,102 @@
+name: Deploy Sample App to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Allow one concurrent deployment
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  # ── 1. Fetch locales from InterCopy ────────────────────────────
+  fetch-locales:
+    runs-on: ubuntu-latest
+    outputs:
+      locales-changed: ${{ steps.diff.outputs.changed }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Fetch locale files from InterCopy
+        env:
+          INTERCOPY_PROJECT_ID: ${{ secrets.INTERCOPY_PROJECT_ID }}
+          INTERCOPY_API_URL: https://api.intercopy.co.uk
+        run: |
+          mkdir -p src/locales
+
+          # Export the neutral bundle (all languages in one call)
+          curl -sf "$INTERCOPY_API_URL/api/exports/neutral?projectId=$INTERCOPY_PROJECT_ID&version=live" \
+            -H "Accept: application/json" \
+            -o /tmp/intercopy-export.json
+
+          # Split into per-locale files using jq
+          # source → en.json
+          jq '.source' /tmp/intercopy-export.json > src/locales/en.json
+
+          # Each target language
+          for lang in $(jq -r 'keys[] | select(. != "source")' /tmp/intercopy-export.json); do
+            jq --arg lang "$lang" '.[$lang]' /tmp/intercopy-export.json > "src/locales/${lang}.json"
+            echo "Written src/locales/${lang}.json"
+          done
+
+      - name: Check if locales changed
+        id: diff
+        run: |
+          if git diff --quiet src/locales/; then
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload locale artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: locales
+          path: src/locales/
+
+  # ── 2. Build ───────────────────────────────────────────────────
+  build:
+    runs-on: ubuntu-latest
+    needs: fetch-locales
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download fresh locales
+        uses: actions/download-artifact@v4
+        with:
+          name: locales
+          path: src/locales/
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+        env:
+          VITE_BASE: /intercopy-sample-app/
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/
+
+  # ── 3. Deploy ──────────────────────────────────────────────────
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

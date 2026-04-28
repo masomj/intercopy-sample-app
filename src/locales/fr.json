@@ -1,0 +1,50 @@
+{
+  "nav": {
+    "title": "TaskFlow",
+    "tagline": "Faites avancer les choses"
+  },
+  "hero": {
+    "heading": "Gérez vos tâches,",
+    "headingAccent": "à votre façon.",
+    "description": "Un gestionnaire de tâches simple et beau, conçu pour démontrer InterCopy — la plateforme de localisation pour les équipes modernes.",
+    "cta": "Essayez maintenant",
+    "badge": "Propulsé par InterCopy"
+  },
+  "features": {
+    "heading": "Pourquoi TaskFlow ?",
+    "cards": {
+      "simple": {
+        "title": "Simple par nature",
+        "description": "Pas de bruit, pas d'encombrement. Juste vos tâches et les outils nécessaires."
+      },
+      "fast": {
+        "title": "Ultra rapide",
+        "description": "Ajoutez, complétez et supprimez des tâches en un instant. Conçu pour la vitesse."
+      },
+      "global": {
+        "title": "Pour tout le monde",
+        "description": "Disponible en plusieurs langues. Parce que les bons outils doivent être universels."
+      }
+    }
+  },
+  "todo": {
+    "heading": "Vos tâches",
+    "placeholder": "Ajouter une nouvelle tâche…",
+    "addButton": "Ajouter",
+    "emptyState": "Aucune tâche pour l'instant. Ajoutez-en une ci-dessus !",
+    "completeLabel": "Marquer comme terminé",
+    "deleteLabel": "Supprimer la tâche",
+    "completedBadge": "Terminé",
+    "layout": {
+      "horizontal": "Ligne",
+      "vertical": "Pile"
+    },
+    "counter": "{count} tâche restante | {count} tâches restantes"
+  },
+  "footer": {
+    "madeWith": "Fait avec",
+    "using": "en utilisant",
+    "link": "InterCopy",
+    "rights": "© 2026 TaskFlow. Tous droits réservés."
+  }
+}
