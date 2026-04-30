@@ -27,34 +27,38 @@ jobs:
       - name: Fetch locale files from InterCopy
         env:
           INTERCOPY_PROJECT_ID: ${{ secrets.INTERCOPY_PROJECT_ID }}
+          INTERCOPY_API_TOKEN: ${{ secrets.CLSAAS_API_TOKEN }}
           INTERCOPY_API_URL: https://api.intercopy.co.uk
         run: |
           mkdir -p src/locales
 
+          if [ -z "$INTERCOPY_PROJECT_ID" ] || [ -z "$INTERCOPY_API_TOKEN" ]; then
+            echo "⚠️  INTERCOPY_PROJECT_ID or CLSAAS_API_TOKEN not set — using bundled locales"
+            ls -la src/locales/
+            exit 0
+          fi
+
           echo "Fetching locales for project: $INTERCOPY_PROJECT_ID"
 
-          # Export the neutral bundle (all languages in one call)
-          if curl -sf "$INTERCOPY_API_URL/api/exports/neutral?projectId=$INTERCOPY_PROJECT_ID&version=live" \
+          HTTP_STATUS=$(curl -sS -o /tmp/intercopy-export.json -w "%{http_code}" \
+            -H "X-Api-Token: $INTERCOPY_API_TOKEN" \
             -H "Accept: application/json" \
-            -o /tmp/intercopy-export.json; then
+            "$INTERCOPY_API_URL/api/integration/exports/locales?projectId=$INTERCOPY_PROJECT_ID&version=live" || echo "000")
 
-            # Validate it's a real export (not an error object)
-            if jq -e '.source' /tmp/intercopy-export.json > /dev/null 2>&1; then
-              echo "✅ Export fetched — splitting into locale files"
+          if [ "$HTTP_STATUS" = "200" ] && jq -e '.source' /tmp/intercopy-export.json > /dev/null 2>&1; then
+            echo "✅ Export fetched — splitting into locale files"
 
-              # source → en.json
-              jq '.source' /tmp/intercopy-export.json > src/locales/en.json
-
-              # Each target language
-              for lang in $(jq -r 'keys[] | select(. != "source")' /tmp/intercopy-export.json); do
-                jq --arg lang "$lang" '.[$lang]' /tmp/intercopy-export.json > "src/locales/${lang}.json"
-                echo "  Written src/locales/${lang}.json"
-              done
-            else
-              echo "⚠️  Export response did not contain .source — using bundled locales"
-            fi
+            # Each language key in the response → src/locales/<lang>.json
+            # Skip the duplicate "source" alias (we get the real BCP-47 code too)
+            for lang in $(jq -r 'keys[] | select(. != "source")' /tmp/intercopy-export.json); do
+              jq --arg lang "$lang" '.[$lang]' /tmp/intercopy-export.json > "src/locales/${lang}.json"
+              echo "  Written src/locales/${lang}.json"
+            done
           else
-            echo "⚠️  InterCopy API fetch failed (project not yet seeded?) — using bundled locales"
+            echo "⚠️  InterCopy API returned $HTTP_STATUS — using bundled locales"
+            echo "Response body (first 500 chars):"
+            head -c 500 /tmp/intercopy-export.json || true
+            echo
           fi
 
           echo "Locale files present:"
